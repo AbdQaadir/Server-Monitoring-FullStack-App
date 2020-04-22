@@ -66,9 +66,8 @@ app.post('/users/register', async(req, res) => {
         // If there is an error
         res.render('register', {errors})
     } else{
-        // If there is no error: Form Validation has passed
-
-        let hashedPassword = await bcrypt.hash(password, 2);
+        // If there is no error: Form Validation has passe
+        let hashedPassword = await bcrypt.hash(password, 10);
         // console.log(hashedPassword);
         
         try {
