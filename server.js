@@ -1,15 +1,15 @@
 const express = require('express');
 const app = express();
-const { pool } = require('./dbConfig')
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
 const passport = require('passport');
-
+const User = require('./dbConfig').User
 const initializePassport = require('./passportConfig');
+require('dotenv').config();
 
-
+// Initializing Passport
 initializePassport(passport)
 
 
@@ -48,13 +48,14 @@ app.get('/users/logout', (req,res) =>{
 })
 
 app.post('/users/register', async(req, res) => {
-    let {name, email, password, password2} = req.body;
-    // console.log({ name, email, password, password2 });
+    let { name, email, password, password2} = req.body;
+    console.log({ name, email, password, password2 });
+    console.log(req.body);
 
     let errors = [];
 
     // Validation Check
-    if(!name || !email || !password || !password2){
+    if (!name || !email || !password || !password2){
         errors.push({message: 'Please enter all fields'});
     }
     if(password.length< 6){
@@ -69,42 +70,30 @@ app.post('/users/register', async(req, res) => {
     } else{
         // If there is no error: Form Validation has passe
         let hashedPassword = await bcrypt.hash(password, 10);
-        // console.log(hashedPassword);
         
-        try {
-            pool.query(
-                `SELECT * FROM users WHERE email = $1`,
-                [email], (err, results) => {
-                    if(err){
-                        console.error(err.message)
-                    }
-                    console.log(results.rows);
-                    if (results.rows.length > 0) {
-                        errors.push({ message: "User already registered!" });
-                        res.render('register', { errors })
-                    }else{
-                        try{
-                            pool.query(
-                                `INSERT INTO users (name, email, password) 
-                                VALUES ($1, $2, $3)
-                                RETURNING id, password`, [name, email, hashedPassword], (err, results) => {
-                                    if (err) {
-                                        throw err
-                                    }
-                                    // console.log(results.rows);
-                                    req.flash('success_msg', 'You are now registered, please log in');
-                                    res.redirect('/users/login');
-                                }
-                            )
-                        } catch(err){
-                            console.error(err.message)
-                        }
-                    }
-                }
-            )
-        } catch (err) {
-            console.error(err.message)
-        }
+        console.log(hashedPassword);
+    
+        // Sequelize querying the database while registering
+        User.findAll({
+            where: {
+                email: req.body.email
+            }      
+        }).then(function(user) {
+            if(user[0] !== undefined){
+                errors.push({ message: "User already registered!" });
+                res.render('register', { errors })
+            }
+            else if(user[0] === undefined){
+                User.create({
+                    name: req.body.name,
+                    email: req.body.email,
+                    password: hashedPassword
+                })
+                req.flash('success_msg', 'You are now registered, please log in');
+                res.redirect('/users/login');
+            }
+            
+        })
     }
 })
 
