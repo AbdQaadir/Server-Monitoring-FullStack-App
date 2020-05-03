@@ -10,8 +10,8 @@ script:
   - npm run build
 install:
   - npm install
-services:
-  - postgresql
+# services:
+#   - postgresql
 
 # env:
 #   global:
