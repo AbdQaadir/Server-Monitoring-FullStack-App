@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "mocha"
+    "test": "nyc mocha",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "repository": {
     "type": "git",
@@ -36,6 +37,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
-    "mocha": "^7.1.2"
+    "mocha": "^7.1.2",
+    "nyc": "^15.0.1"
   }
 }
