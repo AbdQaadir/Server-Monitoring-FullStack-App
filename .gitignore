@@ -1,5 +1,2 @@
 .env
-node_modules/
-.nyc_output
-coverage
-*.lcov
+/node_modules
