@@ -1,26 +1,12 @@
 language: node_js
 node_js:
   - "stable"
-  - node
 cache:
   directories:
   - node_modules
 script:
   - npm test
-  - npm run build
 install:
   - npm install
-# services:
-#   - postgresql
-
-env:
-  global:
-    -CODECOV_TOKEN="7d878f56-ad3b-4297-bbf7-2f81d78d703f"
-    -NODE_ENV=test
-# before_script:
-#   - psql -c 'create database nodelogin;' -U postgres
-#   - psql -c "CREATE USER abdqaadir WITH PASSWORD (ola)5902;" -U abdqaadir
-#   - npm run build
-script:
-  -npm test
-# after_success:
+services:
+  - postgresql
