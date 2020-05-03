@@ -4,9 +4,8 @@
   "description": "Learn Full Stack App",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
-    "test": "nyc mocha",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "start": "node server.js",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
