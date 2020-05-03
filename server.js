@@ -38,7 +38,8 @@ app.get('/users/login', checkAuthenticated, (req, res) => {
 });
 
 app.get('/users/dashboard', checkNotAuthenticated, (req, res) => {
-    res.render('dashboard', {user: req.user.name})
+    const username = req.user.name
+    res.render('dashboard', {user: username })
 });
 
 app.get('/users/logout', (req,res) =>{
@@ -47,54 +48,62 @@ app.get('/users/logout', (req,res) =>{
     res.redirect('/users/login')
 })
 
-app.post('/users/register', async(req, res) => {
-    let { name, email, password, password2} = req.body;
-    console.log({ name, email, password, password2 });
-    console.log(req.body);
-
-    let errors = [];
-
-    // Validation Check
-    if (!name || !email || !password || !password2){
-        errors.push({message: 'Please enter all fields'});
-    }
-    if(password.length< 6){
-        errors.push({message: "Password should not be less than 6 characters"})
-    }
-    if(password !== password2){
-        errors.push({ message: "Password does not match" })
-    }
-    if(errors.length > 0){
-        // If there is an error
-        res.render('register', {errors})
-    } else{
-        // If there is no error: Form Validation has passe
-        let hashedPassword = await bcrypt.hash(password, 10);
-        
-        console.log(hashedPassword);
+app.post('/users/register', (req, res) => {
     
-        // Sequelize querying the database while registering
-        User.findAll({
-            where: {
-                email: req.body.email
-            }      
-        }).then(function(user) {
-            if(user[0] !== undefined){
-                errors.push({ message: "User already registered!" });
-                res.render('register', { errors })
-            }
-            else if(user[0] === undefined){
-                User.create({
-                    name: req.body.name,
-                    email: req.body.email,
-                    password: hashedPassword
-                })
-                req.flash('success_msg', 'You are now registered, please log in');
-                res.redirect('/users/login');
-            }
+    const { name, email, password, password2} = req.body;
+
+    res.json({ name, email, password, password2});
+    
+    
+    
+    
+    // console.log({ name, email, password, password2 });
+    // res.send({ req});
+    // console.log(req.body);
+
+    // let errors = [];
+
+    // // Validation Check
+    // if (!name || !email || !password || !password2){
+    //     errors.push({message: 'Please enter all fields'});
+    // }
+    // if(password.length< 6){
+    //     errors.push({message: "Password should not be less than 6 characters"})
+    // }
+    // if(password !== password2){
+    //     errors.push({ message: "Password does not match" })
+    // }
+    // if(errors.length > 0){
+    //     // If there is an error
+    //     res.render('register', {errors})
+    // } else{
+    //     // If there is no error: Form Validation has passe
+    //     let hashedPassword = await bcrypt.hash(password, 10);
+        
+    //     console.log(hashedPassword);
+    
+    //     // Sequelize querying the database while registering
+    //     User.findAll({
+    //         where: {
+    //             email: req.body.email
+    //         }      
+    //     }).then(function(user) {
+    //         if(user[0] !== undefined){
+    //             errors.push({ message: "User already registered!" });
+    //             res.render('register', { errors })
+    //         }
+    //         else if(user[0] === undefined){
+    //             User.create({
+    //                 name: req.body.name,
+    //                 email: req.body.email,
+    //                 password: hashedPassword
+    //             })
+    //             req.flash('success_msg', 'You are now registered, please log in');
+    //             res.redirect('/users/login');
+    //         }
             
-        })
-    }
+    //     })
+    // }
 })
 
 app.post('/users/login', passport.authenticate('local', {
@@ -120,3 +129,6 @@ function checkNotAuthenticated(req, res, next) {
 
 
 app.listen(PORT, () => console.log("Server running on port " + PORT))
+
+
+module.exports = app;
