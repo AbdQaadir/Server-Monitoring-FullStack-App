@@ -4,9 +4,9 @@ node_js:
 cache:
   directories:
   - node_modules
-script:
-  - npm test
 install:
   - npm install
+script:
+  - npm test
 services:
   - postgresql

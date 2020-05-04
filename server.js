@@ -48,7 +48,7 @@ app.get('/users/logout', (req,res) =>{
     res.redirect('/users/login')
 })
 
-app.post('/users/register', (req, res) => {
+app.post('/users/register', async(req, res) => {
     
     const { name, email, password, password2} = req.body;
 
