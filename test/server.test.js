@@ -75,15 +75,5 @@ describe('it checks the server paths', function(){
                     done();
                 })
         })
-    });
-    
+    });  
 })
-// app.get('/users/dashboard', checkNotAuthenticated, (req, res) => {
-//     res.render('dashboard', { user: req.user.name })
-// });
-
-// app.get('/users/logout', (req, res) => {
-//     req.logOut();
-//     req.flash('success_msg', "You have logged out");
-//     res.redirect('/users/login')
-// })
