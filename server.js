@@ -50,8 +50,7 @@ app.get('/users/logout', (req,res) =>{
 
 app.post('/users/register', async(req, res) => {
     const { name, email, password, password2} = req.body;
-    res.json({ name, email, password, password2})
-    console.log({ name, email, password, password2 });
+    // res.json({ name, email, password, password2});
 
     let errors = [];
 
@@ -69,9 +68,8 @@ app.post('/users/register', async(req, res) => {
         // If there is an error
         res.render('register', {errors})
     } else{
-        // If there is no error: Form Validation has passe
+        // If there is no error: Form Validation has passed
         let hashedPassword = await bcrypt.hash(password, 10);
-        
         console.log(hashedPassword);
     
         // Sequelize querying the database while registering
