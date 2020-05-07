@@ -5,6 +5,5 @@ cache: npm
 install:
     - npm ci
 script:
-    # - npm run test
-    - npm run test:codecov
-    # - npm run test:report-coverage
+    - npm run test
+    - npm run test:report-coverage
