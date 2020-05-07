@@ -5,7 +5,8 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
 const passport = require('passport');
-const User = require('./dbConfig').User
+const jwt = require('jsonwebtoken');
+const User = require('./model/User')
 const initializePassport = require('./passportConfig');
 require('dotenv').config();
 
@@ -70,33 +71,44 @@ app.post('/users/register', async(req, res) => {
     } else{
         // If there is no error: Form Validation has passed
         let hashedPassword = await bcrypt.hash(password, 10);
-        console.log(hashedPassword);
-    
+        let newUser = {
+            name: req.body.name,
+            email: req.body.email,
+            password: hashedPassword
+        }
         // Sequelize querying the database while registering
         User.findAll({
             where: {
                 email: req.body.email
             }      
         }).then(function(user) {
-            if(user[0] !== undefined){
+            if(user[0]){
                 errors.push({ message: "User already registered!" });
                 res.render('register', { errors })
             }
-            else if(user[0] === undefined){
-                User.create({
-                    name: req.body.name,
-                    email: req.body.email,
-                    password: hashedPassword
+            else if(!user[0]){
+                User.create(newUser).then(() =>{
+                    let payload = {
+                        email: req.body.email
+                    }
+                    // For now our secret is fine, but for future projects should protect
+                    // your secret and not expose it like this.
+                    jwt.sign(payload, 'secret', { expiresIn: '1h' }, (err, token) => {
+                        // Here we send the token to the client.
+                        res.json({ session: token })
+                        // console.log({ session: token })
+                    })
+                    req.flash('success_msg', 'You are now registered, please log in');
+                    res.redirect('/users/login');
                 })
-                req.flash('success_msg', 'You are now registered, please log in');
-                res.redirect('/users/login');
+                
             }
             
         })
     }
 })
 
-app.post('/users/login', passport.authenticate('local', {
+app.post('/users/login', passport.authenticate('local', { 
     successRedirect: '/users/dashboard',
     failureRedirect: '/users/login',
     failureFlash: true
@@ -116,6 +128,7 @@ function checkNotAuthenticated(req, res, next) {
     res.redirect('/users/login');
 }
 
+// Format token
 
 
 app.listen(PORT, () => console.log("Server running on port " + PORT))

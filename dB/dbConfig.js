@@ -9,11 +9,4 @@ const connection = new Sequelize(`postgres://${process.env.DB_USER}:${process.en
     }
 })
 
-
-const User = connection.define('users', {
-    name: Sequelize.STRING,
-    email: Sequelize.STRING,
-    password: Sequelize.STRING,
-})
-
-module.exports = {connection, User};
+module.exports = connection

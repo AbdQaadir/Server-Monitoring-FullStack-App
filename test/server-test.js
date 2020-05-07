@@ -51,11 +51,7 @@ describe('it checks the server paths', function(){
                 .send({ name: "abd", email: "lateef9816@gmail.com", password: "(ola)9816", password2: "(ola)9816" })
                 .end((err, res) => {
                     expect(res).to.have.status(200);
-                    // expect(res.body.name).to.be.a('string');
-                    // expect(res.body.email).to.be.a('string');
-                    // expect(res.body.password).to.be.a('string');
-                    expect(res.body.password).to.equals(res.body.password2);
-                    // expect(res.body.password2).to.be.a('string');
+                    expect(res.body).to.be.a('object');
                     done();
                 })
         })
