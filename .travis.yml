@@ -2,6 +2,9 @@ language: node_js
 node_js:
     - "stable"
 cache: npm
+install:
+    - npm ci
 script:
-    - npm run test
-    - npm run report-coverage
+    # - npm run test
+    - npm run test:codecov
+    # - npm run test:report-coverage
