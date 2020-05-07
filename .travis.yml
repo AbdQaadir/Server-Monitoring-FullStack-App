@@ -5,6 +5,3 @@ cache: npm
 script:
     - npm run test
     - npm run report-coverage
-env:
-    CODECOV_TOKEN = "7d878f56-ad3b-4297-bbf7-2f81d78d703f"
-install: travis_wait 30 mvn install
