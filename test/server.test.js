@@ -43,23 +43,23 @@ describe('it checks the server paths', function(){
     });
 
   
-    // describe("Submit form on Registration Page", function () {
-    //     it('check the post method /users/register path', done => {
-    //         chai
-    //             .request(app)
-    //             .post('/users/register')
-    //             .send({ name: "abd", email: "lateef9816@gmail.com", password: "(ola)9816", password2: "(ola)9816" })
-    //             .end((err, res) => {
-    //                 expect(res).to.have.status(200);
-    //                 expect(res.body.name).to.be.a('string');
-    //                 expect(res.body.email).to.be.a('string');
-    //                 expect(res.body.password).to.be.a('string');
-    //                 expect(res.body.password).to.equals(res.body.password2);
-    //                 expect(res.body.password2).to.be.a('string');
-    //                 done();
-    //             })
-    //     })
-    // }); 
+    describe("Submit form on Registration Page", function () {
+        it('check the post method /users/register path', done => {
+            chai
+                .request(app)
+                .post('/users/register')
+                .send({ name: "abd", email: "lateef9816@gmail.com", password: "(ola)9816", password2: "(ola)9816" })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    // expect(res.body.name).to.be.a('string');
+                    // expect(res.body.email).to.be.a('string');
+                    // expect(res.body.password).to.be.a('string');
+                    expect(res.body.password).to.equals(res.body.password2);
+                    // expect(res.body.password2).to.be.a('string');
+                    done();
+                })
+        })
+    }); 
 
     describe("Get Dashboard Page", function () {
         it('check the get method for /users/dashboard path', done => {
