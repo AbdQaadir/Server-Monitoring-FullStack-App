@@ -91,9 +91,8 @@ app.post('/users/register', async(req, res) => {
                         email: req.body.email
                     }
                     jwt.sign(payload, 'secret', { expiresIn: '1h' }, (err, token) => {
-                        // Here we send the token to the client.
                         res.json({ session: token })
-                        // console.log({ session: token })
+                        console.log({ session: token })
                     })
                     req.flash('success_msg', 'You are now registered, please log in');
                     res.redirect('/users/login');

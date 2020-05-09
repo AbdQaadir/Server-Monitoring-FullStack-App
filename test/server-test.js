@@ -8,6 +8,24 @@ chai.use(chaiHttp);
 
 describe('it checks the server paths', function(){
 
+    before(done => {
+        User.destroy({
+            where: {},
+            truncate: true
+        })
+            .then(() => {
+                // After we empty our database we create one user for our login test
+                User.create({
+                    name: "lateef Quadri",
+                    email: 'test@email.com',
+                    password: '123456',
+                    password2: '123456'
+                })
+                    .then(() => done());
+            });
+    });
+
+
     describe("Home Page", function(){
         it('ensures the / path returns success', done => {
             chai
@@ -40,23 +58,24 @@ describe('it checks the server paths', function(){
     });
 
   
-    describe("Register Post Method", function () {
-        it('checks the post method on /users/register', done => {
-            chai
-                .request(app)
-                .post('/users/register')
-                .send({
-                    name: "lateef Quadri",
-                    email: 'testas@fmail.com',
-                    password: '123456',
-                    password2: '123456'
-                })
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    done();
-                })
-        })
-    }); 
+    // describe("Register Post Method", function () {
+    //     it('checks the post method on /users/register', done => {
+    //         chai
+    //             .request(app)
+    //             .post('/users/register')
+    //             .send({
+    //                 name: "lateef Quadri",
+    //                 email: 'testsd@fmail.com',
+    //                 password: '123456',
+    //                 password2: '123456'
+    //             })
+    //             .end((err, res) => {
+    //                 expect(res).to.have.status(200);
+    //                 // expect(res.body).to.be.a('object');
+    //                 done();
+    //             })
+    //     })
+    // }); 
 
     describe("Get Dashboard Page", function () {
         it('check the get method for /users/dashboard path', done => {
