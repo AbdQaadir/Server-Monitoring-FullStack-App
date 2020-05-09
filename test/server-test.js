@@ -1,10 +1,13 @@
 const chai = require('chai');
 const expect = require('chai').expect;
-const chaiHttp = require('chai-http');
-chai.use(chaiHttp);
 const app = require('../server')
+const chaiHttp = require('chai-http');
+const User = require('../model/User')
+chai.use(chaiHttp);
+
 
 describe('it checks the server paths', function(){
+
     describe("Home Page", function(){
         it('ensures the / path returns success', done => {
             chai
@@ -17,41 +20,39 @@ describe('it checks the server paths', function(){
         })
     });
 
-
-    describe("Registration Page", function(){
-        it('check the /users/register path', done => {
-            chai
-                .request(app)
-                .get('/users/register')
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    done();
-                })
-        })
-    });
-
     describe("Login Page", function(){
         it('check the /users/login path', done => {
             chai
                 .request(app)
-                .get('/users/login')
+                .post('/users/login')
+                .send({
+                    name: "lateef Quadri",
+                    email: 'test@fmail.com',
+                    password: '123456',
+                    password2: '123456'
+                })
                 .end((err, res) => {
                     expect(res).to.have.status(200);
+                    expect(res.body).to.be.a('object')
                     done();
                 })
         })
     });
 
   
-    describe("Submit form on Registration Page", function () {
-        it('check the post method /users/register path', done => {
+    describe("Register Post Method", function () {
+        it('checks the post method on /users/register', done => {
             chai
                 .request(app)
                 .post('/users/register')
-                .send({ name: "abd", email: "lateef9816@gmail.com", password: "(ola)9816", password2: "(ola)9816" })
+                .send({
+                    name: "lateef Quadri",
+                    email: 'testas@fmail.com',
+                    password: '123456',
+                    password2: '123456'
+                })
                 .end((err, res) => {
                     expect(res).to.have.status(200);
-                    expect(res.body).to.be.a('object');
                     done();
                 })
         })
@@ -62,6 +63,18 @@ describe('it checks the server paths', function(){
             chai
                 .request(app)
                 .get('/users/dashboard')
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    done();
+                })
+        })
+    });
+
+    describe("Registration Page", function () {
+        it('check the /users/register path', done => {
+            chai
+                .request(app)
+                .get('/users/register')
                 .end((err, res) => {
                     expect(res).to.have.status(200);
                     done();

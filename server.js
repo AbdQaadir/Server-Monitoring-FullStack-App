@@ -51,7 +51,6 @@ app.get('/users/logout', (req,res) =>{
 
 app.post('/users/register', async(req, res) => {
     const { name, email, password, password2} = req.body;
-    // res.json({ name, email, password, password2});
 
     let errors = [];
 
