@@ -55,26 +55,20 @@ app.post('/users/register', async(req, res) => {
     let errors = [];
 
     // Validation Check
-    if (!name || !email || !password || !password2){
-        errors.push({message: 'Please enter all fields'});
-    }
-    if(password.length< 6){
-        errors.push({message: "Password should not be less than 6 characters"})
-    }
-    if(password !== password2){
-        errors.push({ message: "Password does not match" })
-    }
-    if(errors.length > 0){
-        // If there is an error
-        res.render('register', {errors})
-    } else{
+    if (!name || !email || !password || !password2)  errors.push({message: 'Please enter all fields'})
+    
+    if(password.length< 6) errors.push({message: "Password should not be less than 6 characters"})
+
+    if(password !== password2) errors.push({ message: "Password does not match" })
+    if (errors.length > 0) res.render('register', { errors }) // If there is an error 
+    else{
         // If there is no error: Form Validation has passed
         let hashedPassword = await bcrypt.hash(password, 10);
         let newUser = {
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword
-        }
+    }
         // Sequelize querying the database while registering
         User.findAll({
             where: {

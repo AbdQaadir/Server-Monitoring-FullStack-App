@@ -6,4 +6,8 @@ install:
     - npm ci
 script:
     - npm run test
-    - npm run test:report-coverage
+    - npm run report-coverage
+after_success: npm run coverage
+env:
+  global:
+  - NODE_ENV=test

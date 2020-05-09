@@ -10,3 +10,4 @@ const connection = new Sequelize(`postgres://${process.env.DB_USER}:${process.en
 })
 
 module.exports = connection
+
