@@ -90,8 +90,6 @@ app.post('/users/register', async(req, res) => {
                     let payload = {
                         email: req.body.email
                     }
-                    // For now our secret is fine, but for future projects should protect
-                    // your secret and not expose it like this.
                     jwt.sign(payload, 'secret', { expiresIn: '1h' }, (err, token) => {
                         // Here we send the token to the client.
                         res.json({ session: token })
