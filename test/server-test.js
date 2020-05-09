@@ -8,24 +8,6 @@ chai.use(chaiHttp);
 
 describe('it checks the server paths', function(){
 
-    before(done => {
-        User.destroy({
-            where: {},
-            truncate: true
-        })
-            .then(() => {
-                // After we empty our database we create one user for our login test
-                User.create({
-                    name: "lateef Quadri",
-                    email: 'test@email.com',
-                    password: '123456',
-                    password2: '123456'
-                })
-                    .then(() => done());
-            });
-    });
-
-
     describe("Home Page", function(){
         it('ensures the / path returns success', done => {
             chai
