@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon server.js",
     "test": "nyc mocha --timeout 10000",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "showcoverage": "start coverage/lcov-report/index.html"
     
   },
   "repository": {

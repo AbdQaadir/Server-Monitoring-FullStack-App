@@ -45,12 +45,25 @@ app.get('/users/dashboard', checkNotAuthenticated, (req, res) => {
 
 app.get('/users/logout', (req,res) =>{
     req.logOut();
+    res.json({success_msg: "You have logged out"})
     req.flash('success_msg', "You have logged out");
     res.redirect('/users/login')
 })
 
 app.post('/users/register', async(req, res) => {
-    const { name, email, password, password2} = req.body;
+    // const { name, email, password, password2} = req.body;
+    req.body.name = "AbdulQaadir";
+    req.body.email = "Lateef9816@gmail.com";
+    req.body.password = "(ola)5902)";
+    req.body.password2 = "(ola)5902)";
+
+    let name = req.body.name
+    let email = req.body.email
+    let password = req.body.password
+    let password2 = req.body.password2
+    
+    res.json({name, email, password, password2});
+
 
     let errors = [];
 
@@ -81,13 +94,13 @@ app.post('/users/register', async(req, res) => {
             }
             else if(!user[0]){
                 User.create(newUser).then(() =>{
-                    let payload = {
-                        email: req.body.email
-                    }
-                    jwt.sign(payload, 'secret', { expiresIn: '1h' }, (err, token) => {
-                        res.json({ session: token })
-                        console.log({ session: token })
-                    })
+                    // let payload = {
+                    //     email
+                    // }
+                    // jwt.sign(payload, 'secret', { expiresIn: '1h' }, (err, token) => {
+                    //     res.json({ session: token })
+                    //     console.log({ session: token })
+                    // })
                     req.flash('success_msg', 'You are now registered, please log in');
                     res.redirect('/users/login');
                 })

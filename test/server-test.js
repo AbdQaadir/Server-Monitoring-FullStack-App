@@ -40,24 +40,28 @@ describe('it checks the server paths', function(){
     });
 
   
-    // describe("Register Post Method", function () {
-    //     it('checks the post method on /users/register', done => {
-    //         chai
-    //             .request(app)
-    //             .post('/users/register')
-    //             .send({
-    //                 name: "lateef Quadri",
-    //                 email: 'testsd@fmail.com',
-    //                 password: '123456',
-    //                 password2: '123456'
-    //             })
-    //             .end((err, res) => {
-    //                 expect(res).to.have.status(200);
-    //                 // expect(res.body).to.be.a('object');
-    //                 done();
-    //             })
-    //     })
-    // }); 
+    describe("Register Post Method", function () {
+        it('checks the post method on /users/register', done => {
+            chai
+                .request(app)
+                .post('/users/register')
+                .send({
+                    name: "lateef Quadri",
+                    email: 'testsd@fmail.com',
+                    password: '123456',
+                    password2: '123456'
+                })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body.name).to.be.a('string');
+                    expect(res.body.email).to.be.a('string');
+                    expect(res.body.password).to.be.a('string');
+                    expect(res.body.password2).to.be.a('string');
+                    expect(res.body.password).to.equal(res.body.password2);
+                    done();
+                })
+        })
+    }); 
 
     describe("Get Dashboard Page", function () {
         it('check the get method for /users/dashboard path', done => {
