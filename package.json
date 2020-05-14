@@ -8,7 +8,6 @@
     "test": "nyc mocha --timeout 10000",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "showcoverage": "start coverage/lcov-report/index.html"
-    
   },
   "repository": {
     "type": "git",
@@ -34,7 +33,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.0.2",
     "pg-hstore": "^2.3.3",
-    "sequelize": "^5.21.6"
+    "sequelize": "^5.21.9"
   },
   "devDependencies": {
     "chai": "^4.2.0",

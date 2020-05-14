@@ -7,11 +7,8 @@ const flash = require('express-flash');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('./model/User')
-const initializePassport = require('./passportConfig');
 require('dotenv').config();
 
-// Initializing Passport
-initializePassport(passport)
 
 
 // SET MIDDLEWARE
@@ -23,64 +20,30 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
-app.use(passport.initialize())
-app.use(passport.session())
+
 app.use(flash());
 
-app.get('/', checkAuthenticated, (req, res) => {
+app.get('/', (req, res) => {
     res.render('index')
 });
 
-app.get('/users/register', checkAuthenticated, (req, res) => {
+app.get('/users/register', (req, res) => {
     res.render('register')
 });
-app.get('/users/login', checkAuthenticated, (req, res) => {
+app.get('/users/login', (req, res) => {
     res.render('login')
 });
 
-app.get('/users/dashboard', checkNotAuthenticated, (req, res) => {
-    const username = req.user.name
-    res.render('dashboard', {user: username })
-});
 
-app.get('/users/logout', (req,res) =>{
-    req.logOut();
-    res.json({success_msg: "You have logged out"})
-    req.flash('success_msg', "You have logged out");
-    res.redirect('/users/login')
-})
 
 app.post('/users/register', async(req, res) => {
-    // const { name, email, password, password2} = req.body;
-    req.body.name = "AbdulQaadir";
-    req.body.email = "Lateef9816@gmail.com";
-    req.body.password = "(ola)5902)";
-    req.body.password2 = "(ola)5902)";
-
-    let name = req.body.name
-    let email = req.body.email
-    let password = req.body.password
-    let password2 = req.body.password2
+        
+    let salt = bcrypt.genSaltSync(10);
+    let hash = bcrypt.hashSync(req.body.password, salt);
     
-    res.json({name, email, password, password2});
-
-
-    let errors = [];
-
-    // Validation Check
-    if (!name || !email || !password || !password2)  errors.push({message: 'Please enter all fields'})
-    
-    if(password.length< 6) errors.push({message: "Password should not be less than 6 characters"})
-
-    if(password !== password2) errors.push({ message: "Password does not match" })
-    if (errors.length > 0) res.render('register', { errors }) // If there is an error 
-    else{
-        // If there is no error: Form Validation has passed
-        let hashedPassword = await bcrypt.hash(password, 10);
-        let newUser = {
-            name: req.body.name,
-            email: req.body.email,
-            password: hashedPassword
+    let newUser = {        
+        email: req.body.email,
+        password: hash
     }
         // Sequelize querying the database while registering
         User.findAll({
@@ -89,49 +52,54 @@ app.post('/users/register', async(req, res) => {
             }      
         }).then(function(user) {
             if(user[0]){
-                errors.push({ message: "User already registered!" });
-                res.render('register', { errors })
+                res.json({message: "User already registered!"})
             }
             else if(!user[0]){
-                User.create(newUser).then(() =>{
-                    // let payload = {
-                    //     email
-                    // }
-                    // jwt.sign(payload, 'secret', { expiresIn: '1h' }, (err, token) => {
-                    //     res.json({ session: token })
-                    //     console.log({ session: token })
-                    // })
-                    req.flash('success_msg', 'You are now registered, please log in');
-                    res.redirect('/users/login');
+                User.create(newUser)
+                .then(result => {
+                    jwt.sign({user : result}, 'secretkey', (err, token) => {
+                        if (err) {
+                            return next(err)
+                        }
+                        res.json({session: token})
+                        return;
+                    })
                 })
                 
             }
             
         })
-    }
 })
 
-app.post('/users/login', passport.authenticate('local', { 
-    successRedirect: '/users/dashboard',
-    failureRedirect: '/users/login',
-    failureFlash: true
-}))
+app.post('/users/login', (req, res) => {
+    
+	User.findAll({ where: { email: req.body.email }})
+    .then(userr => {
+        if (userr[0]) {
+            const user = userr[0].dataValues
+            bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
+                if (err) {
+                    throw err
+                }
+                if (isMatch) {
+                    jwt.sign({user : user}, 'secretkey', (err, token) => {
+                        res.json({session: token})
+                    })
+                } else {
+                    res.json({ message: "Password is not correct" });
+                }
+            })
+        } 
+        
+        else {
+            res.json({ message: "Email is  not registered" })
+        }
 
-function checkAuthenticated(req, res, next) {
-    if(req.isAuthenticated()){
-        return res.redirect('/users/dashboard');
-    }
-    next();
-}
 
-function checkNotAuthenticated(req, res, next) {
-    if(req.isAuthenticated()){
-        return next();
-    }
-    res.redirect('/users/login');
-}
+    }) 
 
-// Format token
+})
+
 
 
 app.listen(PORT, () => console.log("Server running on port " + PORT))

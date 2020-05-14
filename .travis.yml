@@ -1,14 +1,35 @@
+# language: node_js
+# sudo: false
+# node_js:
+#     - 12
+# cache: npm
+# install:
+#     - npm ci
+# script:
+#     - npm run test
+#     - npm run report-coverage
+# env:
+#   global:
+#   - NODE_ENV=test
+
+
+
 language: node_js
-node_js:
-    - "stable"
-cache: npm
-install:
-    - npm ci
+sudo: false
+node_js: 
+  - 12
+services: 
+  - postgresql
+install: 
+  - "npm install"
+before_script:
+
+  - psql -c "CREATE DATABASE nodedb;" -U postgres
+  - psql -c "CREATE USER nodelogin WITH PASSWORD '123.456';" -U postgres
+  # - psql -c 'create role travis_ci_test;' -U postgr
+  # - sequelize db:
+  - npm install -g sequelize-cli
+  - sequelize db:migrate
 script:
-    - npm run test
-    - npm run report-coverage
-env:
-  global:
-  - NODE_ENV=test
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  # - sequelize db:migrate --env test
+  - npm test

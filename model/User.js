@@ -3,10 +3,13 @@ var Sequelize = require('sequelize');
 
 
 const User = connection.define('users', {
-    name: Sequelize.STRING,
     email: Sequelize.STRING,
     password: Sequelize.STRING,
 })
+// User.beforeCreate((user, options) => {
+//     let salt = bcrypt.genSaltSync(10);
+//     let hash = bcrypt.hashSync(user.password, salt);
+//     return (user.password = hash);
+//   });
 
-
-module.exports =  User
+module.exports =  User;
