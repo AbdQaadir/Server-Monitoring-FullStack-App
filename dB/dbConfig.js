@@ -3,10 +3,7 @@ var Sequelize = require('sequelize');
 
 let dbConnection = null;
 
-if (process.env.NODE_ENV === "test") dbConnection = process.env.dbConnection;
-else{
-    dbConnection = ""
-}
+process.env.NODE_ENV === "test" ? dbConnection = process.env.dbConnection : dbConnection = 'postgres://uiwbbdrf:LPeb13nXxjgwp5i3xtMiiGL-IrFPEznO@drona.db.elephantsql.com:5432/uiwbbdrf';
 const connection = new Sequelize(dbConnection, {
     define: {
         timestamps: false

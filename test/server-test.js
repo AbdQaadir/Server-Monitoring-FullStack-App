@@ -11,31 +11,27 @@ chai.use(chaiHttp);
 
 describe('it checks the server paths', function(){
 
-    describe("Home Page", function(){
-        it('ensures the / path returns success', done => {
-            chai
-                .request(app)
-                .get('/')
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    done();
-                })
+    it('ensures the / path returns success', done => {
+        chai
+        .request(app)
+        .get('/')
+        .end((err, res) => {
+            expect(res).to.have.status(200);
+            done();
         })
-    });
+    })
 
 
-    describe("Registration Page", function () {
-        it('check the /users/register path', done => {
-            chai
-            .request(app)
-            .get('/users/register')
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                done();
-            })
+    it('check the /users/register path', done => {
+        chai
+        .request(app)
+        .get('/users/register')
+        .end((err, res) => {
+            expect(res).to.have.status(200);
+            done();
         })
-    });
-  
+    })
+
 
     it('should return true', async function(){
         chai.request(app)
@@ -66,9 +62,6 @@ describe('it checks the server paths', function(){
              expect(res.body).to.have.property('session').to.not.be.null;
          })
      })
+
+     
 })
-
-
-
-
-    

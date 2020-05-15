@@ -4,7 +4,7 @@ const PORT = process.env.PORT || 5000;
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
-const passport = require('passport');
+// const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('./model/User')
 require('dotenv').config();
@@ -102,7 +102,7 @@ app.post('/users/login', (req, res) => {
 
 
 
-app.listen(PORT, () => console.log("Server running on port " + PORT))
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
 
 module.exports = app;
