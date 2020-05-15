@@ -1,9 +1,4 @@
 coverage:
-  require_ci_to_pass: yes
-  precision: 2
-  round: nearest
-  range: "50...100"
-  ci:
-    - "travis.org"
-codecov:
-  token: 7d878f56-ad3b-4297-bbf7-2f81d78d703f
+  status:
+    project:
+      default: true

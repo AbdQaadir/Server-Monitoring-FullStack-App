@@ -5,10 +5,17 @@ node_js:
 services: 
   - postgresql
 install: 
-  - npm install
-  before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
+  - "npm install"
+before_script:
+# username = uiwbbdrf
+# password = LPeb13nXxjgwp5i3xtMiiGL-IrFPEznO
+# hostname = drona.db.elephantsql.com:5432
+# dbname = uiwbbdrf
+  - psql -c "CREATE DATABASE uiwbbdrf;" -U postgres
+  - psql -c "CREATE USER uiwbbdrf WITH PASSWORD 'LPeb13nXxjgwp5i3xtMiiGL-IrFPEznO';" -U postgres
   - npm install -g sequelize-cli
   - sequelize db:migrate
+  - npm install -g codecov
 script:
-  - npm test
+  - npm run coverage
+  - npm run codecov
