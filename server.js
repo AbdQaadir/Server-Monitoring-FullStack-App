@@ -7,7 +7,7 @@ const flash = require('express-flash');
 // const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('./model/User')
-require('dotenv').config();
+// require('dotenv').config();
 
 
 
@@ -36,7 +36,7 @@ app.get('/users/login', (req, res) => {
 
 
 
-app.post('/users/register', async(req, res) => {
+app.post('/users/register',(req, res) => {
         
     let salt = bcrypt.genSaltSync(10);
     let hash = bcrypt.hashSync(req.body.password, salt);

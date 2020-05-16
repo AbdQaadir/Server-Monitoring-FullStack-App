@@ -58,8 +58,8 @@ describe('it checks the server paths', function(){
          .then(res => { 
              expect(res).to.have.status(200)
              expect(res.body).to.be.an('object')
-             expect(res.body).to.have.property('session').to.be.a('string');
-             expect(res.body).to.have.property('session').to.not.be.null;
+             expect(res.body).to.have.property('session').to.be('string');
+             expect(res.body.session).to.have.property('session').to.not.be.null;
          })
      })
 

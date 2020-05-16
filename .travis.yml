@@ -1,21 +1,23 @@
 language: node_js
 sudo: false
 node_js: 
-  - 12
+  - '12'
+cache: 
+  directories:
+    - node_modules
 services: 
   - postgresql
 install: 
   - "npm install"
 before_script:
-# username = uiwbbdrf
-# password = LPeb13nXxjgwp5i3xtMiiGL-IrFPEznO
-# hostname = drona.db.elephantsql.com:5432
-# dbname = uiwbbdrf
-  - psql -c "CREATE DATABASE uiwbbdrf;" -U postgres
-  - psql -c "CREATE USER uiwbbdrf WITH PASSWORD 'LPeb13nXxjgwp5i3xtMiiGL-IrFPEznO';" -U postgres
+  - npm install
+  - psql -c "CREATE DATABASE uiwbbdrf;" -U uiwbbdrf
+  - psql -c "CREATE USER uiwbbdrf WITH PASSWORD 'LPeb13nXxjgwp5i3xtMiiGL-IrFPEznO';" -U uiwbbdrf
   - npm install -g sequelize-cli
-  - sequelize db:migrate
   - npm install -g codecov
 script:
+  - npm run test
   - npm run coverage
   - npm run codecov
+notifications:
+  email: false
