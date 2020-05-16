@@ -11,7 +11,23 @@ chai.use(chaiHttp);
 
 describe('it checks the server paths', function(){
 
-    it('ensures the / path returns success', done => {
+    before(done => {
+		User.destroy({
+			where: {},
+            truncate: true
+		})
+		.then(() => {
+			// After we empty our database we create one user for our login test
+			User.create({
+				email: 'tested@email.com',
+				password: 'abdul'
+			})
+			.then(() => done());
+		});
+	});
+
+
+    it('Get method for / path', done => {
         chai
         .request(app)
         .get('/')
@@ -22,7 +38,7 @@ describe('it checks the server paths', function(){
     })
 
 
-    it('check the /users/register path', done => {
+    it('Get method for /users/register path', done => {
         chai
         .request(app)
         .get('/users/register')
@@ -33,35 +49,30 @@ describe('it checks the server paths', function(){
     })
 
 
-    it('should return true', async function(){
+    it('Post method for /users/register', async function(){
+        chai.request(app)
+        .post('/users/register')
+        .send({email: 'test@email.com', password: '(abdul)'})
+        .end((err, res) => { 
+           expect(res).to.have.status(200)            
+            expect(res.body).to.be.an('object')
+            // expect(res.body).to.have.property('session').to.be('string');
+        })
+    })
+
+    it('Post method for /users/login path', async function(){
         chai.request(app)
          .post('/users/login')
-         .send({email: 'test@email.com', password: '(abdul)'})
-         .then(res=>{
-             if(res.status != 200){
-                 return expect(res).to.have.status(300)
-             } else {
-                 expect(res).to.have.status(300)
-                 expect(res.body).to.be.an('object')
-                 expect(res.body).to.have.property('session').to.be.a('string');
-                 expect(res.body).to.have.property('session').to.not.be.null;
-             };
+         .send({email: 'tested@email.com', password: 'abdul'})
+         .end((err, res) =>{
+            expect(res).to.have.status(200);
+            expect(res.body).to.be.an('object');
+            // expect(res.body).to.have.property('session').to.be.a('string');        
          })
      });
  
  
  
-     it('should return true', async function(){
-         chai.request(app)
-         .post('/users/register')
-         .send({email: 'test@email.com', password: '(abdul)'})
-         .then(res => { 
-             expect(res).to.have.status(200)
-             expect(res.body).to.be.an('object')
-             expect(res.body).to.have.property('session').to.be('string');
-             expect(res.body.session).to.have.property('session').to.not.be.null;
-         })
-     })
-
+  
      
 })

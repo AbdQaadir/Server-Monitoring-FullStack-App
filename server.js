@@ -4,6 +4,7 @@ const PORT = process.env.PORT || 5000;
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
+const bodyParser = require('body-parser')
 // const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('./model/User')
@@ -14,6 +15,8 @@ const User = require('./model/User')
 // SET MIDDLEWARE
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: false}));
+app.use(bodyParser.json());
+
 
 app.use(session({
     secret: 'secret',
@@ -72,12 +75,14 @@ app.post('/users/register',(req, res) => {
 })
 
 app.post('/users/login', (req, res) => {
-    
-	User.findAll({ where: { email: req.body.email }})
+    const email = req.body.email;
+    const password = req.body.password;
+
+	User.findAll({ where: { email }})
     .then(userr => {
         if (userr[0]) {
             const user = userr[0].dataValues
-            bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
+            bcrypt.compare(password, user.password, (err, isMatch) => {
                 if (err) {
                     throw err
                 }

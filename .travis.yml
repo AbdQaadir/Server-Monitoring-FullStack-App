@@ -10,9 +10,9 @@ services:
 install: 
   - "npm install"
 before_script:
-  - npm install
+#   - npm install
   
-  # - psql -c "CREATE DATABASE uiwbbdrf;" -U uiwbbdrf
+  - psql -c 'create database travis_ci_test;' -U postgres
   # - psql -c "CREATE USER uiwbbdrf WITH PASSWORD 'LPeb13nXxjgwp5i3xtMiiGL-IrFPEznO';" -U uiwbbdrf
   # - npm install -g sequelize-cli
   # - npm sequelize-cli db:migrate --url 'postgres://uiwbbdrf:LPeb13nXxjgwp5i3xtMiiGL-IrFPEznO@drona.db.elephantsql.com:5432/uiwbbdrf'
