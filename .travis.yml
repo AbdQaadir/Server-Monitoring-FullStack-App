@@ -11,9 +11,11 @@ install:
   - "npm install"
 before_script:
   - npm install
-  - psql -c "CREATE DATABASE uiwbbdrf;" -U uiwbbdrf
-  - psql -c "CREATE USER uiwbbdrf WITH PASSWORD 'LPeb13nXxjgwp5i3xtMiiGL-IrFPEznO';" -U uiwbbdrf
+  
+  # - psql -c "CREATE DATABASE uiwbbdrf;" -U uiwbbdrf
+  # - psql -c "CREATE USER uiwbbdrf WITH PASSWORD 'LPeb13nXxjgwp5i3xtMiiGL-IrFPEznO';" -U uiwbbdrf
   - npm install -g sequelize-cli
+  - npx sequelize-cli db:migrate --url 'postgres://uiwbbdrf:LPeb13nXxjgwp5i3xtMiiGL-IrFPEznO@drona.db.elephantsql.com:5432/uiwbbdrf'
   - npm install -g codecov
 script:
   - npm run test
