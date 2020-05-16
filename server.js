@@ -4,19 +4,18 @@ const PORT = process.env.PORT || 5000;
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 // const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('./model/User')
-// require('dotenv').config();
+require('dotenv').config();
 
 
 
 // SET MIDDLEWARE
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: false}));
-app.use(bodyParser.json());
-
+app.use(bodyParser.json())
 
 app.use(session({
     secret: 'secret',
@@ -39,7 +38,7 @@ app.get('/users/login', (req, res) => {
 
 
 
-app.post('/users/register',(req, res) => {
+app.post('/users/register', async(req, res) => {
         
     let salt = bcrypt.genSaltSync(10);
     let hash = bcrypt.hashSync(req.body.password, salt);
@@ -75,14 +74,12 @@ app.post('/users/register',(req, res) => {
 })
 
 app.post('/users/login', (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-
-	User.findAll({ where: { email }})
+    
+	User.findAll({ where: { email: req.body.email }})
     .then(userr => {
         if (userr[0]) {
             const user = userr[0].dataValues
-            bcrypt.compare(password, user.password, (err, isMatch) => {
+            bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
                 if (err) {
                     throw err
                 }
