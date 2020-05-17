@@ -12,9 +12,9 @@ install:
 before_script:
   - npm install
   - psql -c "CREATE DATABASE nodelogin;" -U postgres
-  - psql -c "CREATE USER nodelogin WITH PASSWORD '(ola)5902';" -U postgres
+  - psql -c "CREATE USER abdqaadir WITH PASSWORD '(ola)5902';" -U postgres
   - npm install -g sequelize-cli
-  - npx sequelize db:migrate
+  - sequelize db:migrate
   - npm install -g codecov
 script:
   - npm run test
