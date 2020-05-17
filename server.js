@@ -48,7 +48,7 @@ app.post('/users/register', async(req, res, next) => {
         password: hash
     }
         // Sequelize querying the database while registering
-    return models.User.findAll({
+    models.User.findAll({
         where: {
             email: req.body.email
         }      
@@ -64,16 +64,13 @@ app.post('/users/register', async(req, res, next) => {
                         return next(err)
                     }
                     res.json({session: token})
-                    return;
                 })
             })
-            
         }
-        
     })
 })
 
-app.post('/users/login', (req, res, next) => {
+app.post('/users/login', (req, res) => {
     
 	models.User.findAll({
         where: {

@@ -1,4 +1,4 @@
-process.env.NODE_ENV = 'development';
+process.env.NODE_ENV = 'test';
 
 const chai = require('chai');
 const expect = require('chai').expect;
@@ -60,22 +60,18 @@ describe('it checks the server paths', function(){
          })
      });
 
-    it('Post method for /users/register', done =>{
+    it('Post method for /users/register', function(done){
         chai.request(app)
         .post('/users/register')
-        .send({email: 'test@email.com', password: '(abdul)'})
-        .end((err, res) => { 
+        .send({email: 'tested@email.com', password: '(abdul)'})
+        .end(function(err, res){ 
            expect(res).to.have.status(200)            
             expect(res.body).to.be.an('object')
             // expect(res.body).to.have.property('session').to.be('string');
             done();  
-        })
-    })
-
-  
- 
- 
- 
-  
-     
+            process.exit();
+        })        
+    })    
+    
 })
+
