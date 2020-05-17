@@ -16,6 +16,9 @@ before_script:
   - npm install -g sequelize-cli
   - sequelize db:migrate
   - npm install -g codecov
+branches:
+  only:
+  - week3
 script:
   - npm run test
 notifications:
