@@ -7,8 +7,8 @@ const flash = require('express-flash');
 const bodyParser = require('body-parser');
 // const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const User = require('./model/User')
-require('dotenv').config();
+const models = require('./models')
+// require('dotenv').config();
 
 
 
@@ -38,7 +38,7 @@ app.get('/users/login', (req, res) => {
 
 
 
-app.post('/users/register', async(req, res) => {
+app.post('/users/register', async(req, res, next) => {
         
     let salt = bcrypt.genSaltSync(10);
     let hash = bcrypt.hashSync(req.body.password, salt);
@@ -48,34 +48,38 @@ app.post('/users/register', async(req, res) => {
         password: hash
     }
         // Sequelize querying the database while registering
-        User.findAll({
-            where: {
-                email: req.body.email
-            }      
-        }).then(function(user) {
-            if(user[0]){
-                res.json({message: "User already registered!"})
-            }
-            else if(!user[0]){
-                User.create(newUser)
-                .then(result => {
-                    jwt.sign({user : result}, 'secretkey', (err, token) => {
-                        if (err) {
-                            return next(err)
-                        }
-                        res.json({session: token})
-                        return;
-                    })
+    return models.User.findAll({
+        where: {
+            email: req.body.email
+        }      
+    }).then(function(user) {
+        if(user[0]){
+            res.json({message: "User already registered!"})
+        }
+        else if(!user[0]){
+            models.User.create(newUser)
+            .then(result => {
+                jwt.sign({user : result}, 'secretkey', (err, token) => {
+                    if (err) {
+                        return next(err)
+                    }
+                    res.json({session: token})
+                    return;
                 })
-                
-            }
+            })
             
-        })
+        }
+        
+    })
 })
 
-app.post('/users/login', (req, res) => {
+app.post('/users/login', (req, res, next) => {
     
-	User.findAll({ where: { email: req.body.email }})
+	models.User.findAll({
+        where: {
+            email: req.body.email
+        }
+    })
     .then(userr => {
         if (userr[0]) {
             const user = userr[0].dataValues
@@ -92,14 +96,10 @@ app.post('/users/login', (req, res) => {
                 }
             })
         } 
-        
         else {
             res.json({ message: "Email is  not registered" })
         }
-
-
-    }) 
-
+    })
 })
 
 
