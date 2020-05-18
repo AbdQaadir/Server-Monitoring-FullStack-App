@@ -55,7 +55,7 @@ describe('it checks the server paths', function(){
          .end((err, res) =>{
             expect(res).to.have.status(200);
             expect(res.body).to.be.an('object');
-            // expect(res.body).to.have.property('session').to.be.a('string');  
+            // expect(res.body).to.have.property('message').to.be.a('string');  
             done();      
          })
      });
@@ -67,7 +67,7 @@ describe('it checks the server paths', function(){
         .end(function(err, res){ 
            expect(res).to.have.status(200)            
             expect(res.body).to.be.an('object')
-            // expect(res.body).to.have.property('session').to.be('string');
+            // expect(res.body).to.have.property('message');
             done();  
             process.exit();
         })        

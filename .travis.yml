@@ -15,11 +15,12 @@ before_script:
   - psql -c "CREATE USER abdqaadir WITH PASSWORD '(ola)5902';" -U postgres
   - npm install -g sequelize-cli
   - sequelize db:migrate
-  - npm install -g codecov
+  - npm install -g coveralls
 branches:
   only:
   - week3
 script:
   - npm run test
+after_success: npm run coverage
 notifications:
   email: false
