@@ -1,17 +1,20 @@
 process.env.NODE_ENV = 'test';
-
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 5000;
-const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
 const bodyParser = require('body-parser');
-// const passport = require('passport');
+const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const models = require('./models')
+// const models = require('./models');
+const initializePassportLogin = require('./controllers/login');
+const signUpValidate = require('./controllers/signup');
+
 // require('dotenv').config();
 
+// Initializing Passport
+initializePassportLogin(passport)
 
 
 // SET MIDDLEWARE
@@ -25,83 +28,44 @@ app.use(session({
     saveUninitialized: false
 }));
 
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(flash());
 
-app.get('/', (req, res) => {
+app.get('/', checkAuthenticated, (req, res) => {
     res.render('index')
 });
 
-app.get('/users/register', (req, res) => {
+app.get('/users/register', checkAuthenticated,  (req, res) => {
     res.render('register')
 });
-app.get('/users/login', (req, res) => {
+app.get('/users/login', checkAuthenticated, (req, res) => {
     res.render('login')
 });
 
 
 
-app.post('/users/register', async(req, res, next) => {
-        
-    let salt = bcrypt.genSaltSync(10);
-    let hash = bcrypt.hashSync(req.body.password, salt);
-    
-    let newUser = {        
-        email: req.body.email,
-        password: hash
-    }
-        // Sequelize querying the database while registering
-    models.User.findAll({
-        where: {
-            email: req.body.email
-        }      
-    }).then(function(user) {
-        if(user[0]){
-            res.json({message: "User already registered!"})
-        }
-        else if(!user[0]){
-            models.User.create(newUser)
-            .then(result => {
-                jwt.sign({user : result}, 'secretkey', (err, token) => {
-                    if (err) {
-                        return next(err)
-                    }
-                    res.json({session: token})
-                })
-            })
-        }
-    })
-})
-
-app.post('/users/login', (req, res) => {
-    
-	models.User.findAll({
-        where: {
-            email: req.body.email
-        }
-    })
-    .then(userr => {
-        if (userr[0]) {
-            const user = userr[0].dataValues
-            bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
-                if (err) {
-                    throw err
-                }
-                if (isMatch) {
-                    jwt.sign({user : user}, 'secretkey', (err, token) => {
-                        res.json({session: token})
-                    })
-                } else {
-                    res.json({ message: "Password is not correct" });
-                }
-            })
-        } 
-        else {
-            res.json({ message: "Email is  not registered" })
-        }
-    })
+app.post('/users/register', (req, res) => {
+    signUpValidate(req.body.email, req.body.password, res);
 })
 
 
+
+app.post('/users/login', passport.authenticate('local',{failureRedirect: '/users/login', failureFlash: true}),
+  function(req, res) {
+    jwt.sign({user : req.user}, 'secretkey', (err, token) => {
+        res.json({session: token})
+    });
+  });
+
+
+function checkAuthenticated(req, res, next) {
+if(req.isAuthenticated()){
+    return res.json({message: "You are already logged in"});
+    // return res.redirect('/users/dashboard');
+}
+next();
+}
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
