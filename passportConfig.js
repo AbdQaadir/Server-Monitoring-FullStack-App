@@ -1,13 +1,14 @@
 const localStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
-const User = require('./dbConfig').User
+// const User = require('./dbConfig').User
+const models = require('./models')
 
 
 function initialize (passport){
 const authenticateUser = (email, password, done) => {
 
     // Sequelize querying the database while registering
-    User.findAll({
+    models.User.findAll({
         where: {
             email: email
         }
@@ -47,7 +48,7 @@ const authenticateUser = (email, password, done) => {
     passport.serializeUser((user, done) => done(null, user.id));
 
     passport.deserializeUser((id, done) =>{
-        User.findAll({
+        models.User.findAll({
             where: {
                 id: id
             }

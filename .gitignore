@@ -1,2 +1,7 @@
 .env
 /node_modules
+*.lcov
+.nyc_output
+/.nyc_output
+coverage
+.old_server_files

@@ -1,15 +1,26 @@
 language: node_js
-node_js:
-  - "stable"
+sudo: false
+node_js: 
+  - '12'
+cache: 
+  directories:
+    - node_modules
+services: 
+  - postgres
+install: 
+  - "npm install"
+before_script:
+  - npm install
+  - psql -c "CREATE DATABASE nodelogin;" -U postgres
+  - psql -c "CREATE USER abdqaadir WITH PASSWORD '(ola)5902';" -U postgres
+  - npm install -g sequelize-cli
+  - sequelize db:migrate
+  - npm install -g coveralls
 branches:
   only:
   - week3
-cache:
-  directories:
-  - node_modules
-install:
-  - npm install
 script:
   - npm run test
-services:
-  - postgresql
+after_success: npm run coverage
+notifications:
+  email: false

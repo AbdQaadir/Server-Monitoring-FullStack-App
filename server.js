@@ -1,27 +1,33 @@
+process.env.NODE_ENV = 'test';
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 5000;
-const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
+const bodyParser = require('body-parser');
 const passport = require('passport');
-const User = require('./dbConfig').User
-const initializePassport = require('./passportConfig');
-require('dotenv').config();
+const jwt = require('jsonwebtoken');
+// const models = require('./models');
+const initializePassportLogin = require('./controllers/login');
+const signUpValidate = require('./controllers/signup');
+
+// require('dotenv').config();
 
 // Initializing Passport
-initializePassport(passport)
+initializePassportLogin(passport)
 
 
 // SET MIDDLEWARE
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: false}));
+app.use(bodyParser.json())
 
 app.use(session({
     secret: 'secret',
     resave: false,
     saveUninitialized: false
 }));
+
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(flash());
@@ -30,105 +36,38 @@ app.get('/', checkAuthenticated, (req, res) => {
     res.render('index')
 });
 
-app.get('/users/register', checkAuthenticated, (req, res) => {
+app.get('/users/register', checkAuthenticated,  (req, res) => {
     res.render('register')
 });
 app.get('/users/login', checkAuthenticated, (req, res) => {
     res.render('login')
 });
 
-app.get('/users/dashboard', checkNotAuthenticated, (req, res) => {
-    const username = req.user.name
-    res.render('dashboard', {user: username })
-});
 
-app.get('/users/logout', (req,res) =>{
-    req.logOut();
-    req.flash('success_msg', "You have logged out");
-    res.redirect('/users/login')
+
+app.post('/users/register', (req, res) => {
+    signUpValidate(req.body.email, req.body.password, res);
 })
 
-app.post('/users/register', async(req, res) => {
-    
-    const { name, email, password, password2} = req.body;
 
-    res.json({ name, email, password, password2});
-    
-    
-    
-    
-    console.log({ name, email, password, password2 });
-    res.send({ req});
-    console.log(req.body);
 
-    let errors = [];
+app.post('/users/login', passport.authenticate('local',{failureRedirect: '/users/login', failureFlash: true}),
+  function(req, res) {
+    jwt.sign({user : req.user}, 'secretkey', (err, token) => {
+        res.json({session: token})
+    });
+  });
 
-    // Validation Check
-    if (!name || !email || !password || !password2){
-        errors.push({message: 'Please enter all fields'});
-    }
-    if(password.length< 6){
-        errors.push({message: "Password should not be less than 6 characters"})
-    }
-    if(password !== password2){
-        errors.push({ message: "Password does not match" })
-    }
-    if(errors.length > 0){
-        // If there is an error
-        res.render('register', {errors})
-    } else{
-        // If there is no error: Form Validation has passe
-        let hashedPassword = await bcrypt.hash(password, 10);
-        
-        console.log(hashedPassword);
-    
-        // Sequelize querying the database while registering
-        User.findAll({
-            where: {
-                email: req.body.email
-            }      
-        }).then(function(user) {
-            if(user[0] !== undefined){
-                errors.push({ message: "User already registered!" });
-                res.render('register', { errors })
-            }
-            else if(user[0] === undefined){
-                User.create({
-                    name: req.body.name,
-                    email: req.body.email,
-                    password: hashedPassword
-                })
-                req.flash('success_msg', 'You are now registered, please log in');
-                res.redirect('/users/login');
-            }
-            
-        })
-    }
-})
-
-app.post('/users/login', passport.authenticate('local', {
-    successRedirect: '/users/dashboard',
-    failureRedirect: '/users/login',
-    failureFlash: true
-}))
 
 function checkAuthenticated(req, res, next) {
-    if(req.isAuthenticated()){
-        return res.redirect('/users/dashboard');
-    }
-    next();
+if(req.isAuthenticated()){
+    return res.json({message: "You are already logged in"});
+    // return res.redirect('/users/dashboard');
+}
+next();
 }
 
-function checkNotAuthenticated(req, res, next) {
-    if(req.isAuthenticated()){
-        return next();
-    }
-    res.redirect('/users/login');
-}
-
-
-
-app.listen(PORT, () => console.log("Server running on port " + PORT))
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
 
 module.exports = app;
