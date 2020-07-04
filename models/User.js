@@ -1,25 +1,30 @@
 /* jshint indent: 2 */
 
-'use strict';
+"use strict";
 module.exports = (sequelize, DataTypes) => {
-  var User = sequelize.define('User', {
+  var User = sequelize.define("User", {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
       allowNull: false,
-      primaryKey: true
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: false,
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
     },
     password: {
-        type: DataTypes.STRING,
-        allowNull: true
-    }
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    // timestamp: false,
   });
-  
+  User.sync({ force: true });
   return User;
 };
